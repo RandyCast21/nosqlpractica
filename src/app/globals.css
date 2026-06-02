@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fff7ed;
+  --foreground: #1f2937;
 }
 
 @theme inline {
@@ -14,13 +14,52 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #1a1025;
+    --foreground: #f5f3ff;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+/* ===== Toldo a rayas (awning) de la tienda ===== */
+.awning {
+  background-image: repeating-linear-gradient(
+    90deg,
+    #e11d48 0,
+    #e11d48 40px,
+    #fff 40px,
+    #fff 80px
+  );
+  clip-path: polygon(
+    0 0, 100% 0, 100% 60%,
+    95% 100%, 90% 60%, 85% 100%, 80% 60%, 75% 100%, 70% 60%,
+    65% 100%, 60% 60%, 55% 100%, 50% 60%, 45% 100%, 40% 60%,
+    35% 100%, 30% 60%, 25% 100%, 20% 60%, 15% 100%, 10% 60%,
+    5% 100%, 0 60%
+  );
+}
+
+/* ===== Brillo de cristal sobre las vitrinas ===== */
+.glass-shine::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.35) 45%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 55%
+  );
+  transform: translateX(-120%);
+  transition: transform 0.7s ease;
+  pointer-events: none;
+}
+
+.glass-shine:hover::before {
+  transform: translateX(120%);
 }
