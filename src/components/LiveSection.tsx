@@ -1,10 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { subscribeProducts, updateProduct } from "@/lib/products";
-import type { Product } from "@/lib/types";
+import { storeConfig } from "@/config/store.config";
+import { subscribeProducts, updateProduct } from "@/repos/products.repo";
+import type { Product } from "@/repos/product.schema";
 import { categoryEmoji, formatPrice } from "@/lib/ui";
 import SectionShell from "./SectionShell";
+
+// Colección compartida por toda la clase para ver los cambios en vivo.
+const LIVE_COLL = storeConfig.collections.live;
 
 export default function LiveSection() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -17,6 +21,7 @@ export default function LiveSection() {
 
   useEffect(() => {
     const unsub = subscribeProducts(
+      LIVE_COLL,
       (items) => {
         const changed = new Set<string>();
         const next = new Map<string, number>();
@@ -44,7 +49,7 @@ export default function LiveSection() {
   async function bumpStock(p: Product, delta: number) {
     const { id, ...rest } = p;
     void id;
-    await updateProduct(p.id, {
+    await updateProduct(LIVE_COLL, p.id, {
       ...rest,
       stock: Math.max(0, p.stock + delta),
     });
@@ -56,7 +61,7 @@ export default function LiveSection() {
       badge="Sección 3 · Tiempo real"
       emoji="📡"
       title="La Vitrina en Vivo"
-      subtitle="onSnapshot — lo que cambia un equipo, todos lo ven al instante"
+      subtitle={`onSnapshot — lo que cambia un equipo, todos lo ven al instante · colección "${LIVE_COLL}"`}
       color="#f59e0b"
     >
       <div className="mb-4 flex flex-wrap items-center gap-3">

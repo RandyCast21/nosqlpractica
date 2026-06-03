@@ -6,10 +6,13 @@ import type {
   DocumentData,
 } from "firebase/firestore";
 import { storeConfig } from "@/config/store.config";
-import { fetchProductsPage } from "@/lib/products";
-import type { Product } from "@/lib/types";
+import { fetchProductsPage } from "@/repos/products.repo";
+import type { Product } from "@/repos/product.schema";
 import { categoryEmoji, formatPrice } from "@/lib/ui";
 import SectionShell from "./SectionShell";
+
+// Colección pre-cargada (solo lectura) sobre la que se practican las queries.
+const CATALOG_COLL = storeConfig.collections.catalog;
 
 const PAGE_SIZE = 6;
 type Cursor = QueryDocumentSnapshot<DocumentData> | null;
@@ -30,7 +33,7 @@ export default function CatalogSection() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetchProductsPage({
+      const res = await fetchProductsPage(CATALOG_COLL, {
         category,
         sortDir,
         pageSize: PAGE_SIZE,
@@ -65,7 +68,7 @@ export default function CatalogSection() {
       badge="Sección 2 · Queries"
       emoji="🔍"
       title="El Catálogo"
-      subtitle="Filtra por categoría, ordena por precio y pagina"
+      subtitle={`Filtra por categoría, ordena por precio y pagina · colección "${CATALOG_COLL}"`}
       color="#2563eb"
     >
       {/* Controles de consulta */}

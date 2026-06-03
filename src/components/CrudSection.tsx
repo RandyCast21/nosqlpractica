@@ -7,10 +7,14 @@ import {
   updateProduct,
   deleteProduct,
   fetchAllProducts,
-} from "@/lib/products";
-import type { Product, ProductInput } from "@/lib/types";
+} from "@/repos/products.repo";
+import type { Product, ProductInput } from "@/repos/product.schema";
 import { categoryEmoji, formatPrice } from "@/lib/ui";
 import SectionShell from "./SectionShell";
+
+// Colección de TU EQUIPO (definida en store.config.ts). Todo el CRUD
+// de esta sección trabaja sobre ella.
+const CRUD_COLL = storeConfig.collections.crud;
 
 const EMPTY_FORM: ProductInput = {
   name: "",
@@ -35,7 +39,7 @@ export default function CrudSection() {
     setLoading(true);
     setError(null);
     try {
-      setProducts(await fetchAllProducts());
+      setProducts(await fetchAllProducts(CRUD_COLL));
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -75,9 +79,9 @@ export default function CrudSection() {
     setError(null);
     try {
       if (editingId) {
-        await updateProduct(editingId, form);
+        await updateProduct(CRUD_COLL, editingId, form);
       } else {
-        await createProduct(form);
+        await createProduct(CRUD_COLL, form);
       }
       resetForm();
       await load();
@@ -92,7 +96,7 @@ export default function CrudSection() {
     if (!confirm("¿Retirar este juguete de la juguetería?")) return;
     setError(null);
     try {
-      await deleteProduct(id);
+      await deleteProduct(CRUD_COLL, id);
       if (editingId === id) resetForm();
       await load();
     } catch (e) {
@@ -108,9 +112,18 @@ export default function CrudSection() {
       badge="Sección 1 · CRUD"
       emoji="🧸"
       title="El Mostrador"
-      subtitle="Crear, leer, actualizar y eliminar juguetes"
+      subtitle={`Crear, leer, actualizar y eliminar juguetes · colección "${CRUD_COLL}"`}
       color="#e11d48"
     >
+      <p className="mb-5 rounded-xl border border-rose-200 bg-rose-50 px-4 py-2 text-sm text-rose-800 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200">
+        🗂️ Estás trabajando en la colección{" "}
+        <code className="rounded bg-rose-200/70 px-1.5 py-0.5 font-bold dark:bg-rose-500/30">
+          {CRUD_COLL}
+        </code>
+        . Cámbiala por la de tu equipo en{" "}
+        <code className="font-mono">src/config/store.config.ts</code>.
+      </p>
+
       <div className="grid gap-8 lg:grid-cols-[minmax(0,380px)_1fr]">
         {/* ---- Formulario ---- */}
         <form

@@ -1,0 +1,22 @@
+{
+  "comment": "Índices compuestos para las Queries de la colección catalogo (filtrar por category + ordenar por price). Despliega con: firebase deploy --only firestore:indexes  — o deja que el primer error en la app te dé el enlace de creación con un clic.",
+  "indexes": [
+    {
+      "collectionGroup": "catalogo",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "category", "order": "ASCENDING" },
+        { "fieldPath": "price", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "catalogo",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "category", "order": "ASCENDING" },
+        { "fieldPath": "price", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
